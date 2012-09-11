@@ -1,0 +1,6 @@
+C:\Users\Administrator\Documents\Santhosh_Development\BethesdaSkillLab\BethesdaSkillLab\bin\Debug\BethesdaSkillLab.dll
+C:\Users\Administrator\Documents\Santhosh_Development\BethesdaSkillLab\BethesdaSkillLab\bin\Debug\BethesdaSkillLab.pdb
+C:\Users\Administrator\Documents\Santhosh_Development\BethesdaSkillLab\BethesdaSkillLab\bin\Debug\Microsoft.Sharepoint.Sandbox.dll
+C:\Users\Administrator\Documents\Santhosh_Development\BethesdaSkillLab\BethesdaSkillLab\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Administrator\Documents\Santhosh_Development\BethesdaSkillLab\BethesdaSkillLab\obj\Debug\BethesdaSkillLab.dll
+C:\Users\Administrator\Documents\Santhosh_Development\BethesdaSkillLab\BethesdaSkillLab\obj\Debug\BethesdaSkillLab.pdb

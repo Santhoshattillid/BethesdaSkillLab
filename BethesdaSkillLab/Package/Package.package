@@ -1,3 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package dslVersion="1.0.0.0" Id="2a62a2ea-0723-4600-a2ed-457aabed81ba" solutionId="2a62a2ea-0723-4600-a2ed-457aabed81ba" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel" name="BethesdaSkillLab">
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="2a62a2ea-0723-4600-a2ed-457aabed81ba" solutionId="2a62a2ea-0723-4600-a2ed-457aabed81ba" resetWebServer="false" name="BethesdaSkillLab" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+  <features>
+    <featureReference itemId="f02afc85-fc0a-4ad5-8dd9-746c59a1ad60" />
+  </features>
+  <projectItems>
+    <projectItemReference itemId="392a7605-56eb-4913-85f3-5cc39da1b4e2" />
+  </projectItems>
 </package>

@@ -1,0 +1,85 @@
+﻿.Container
+{
+    width: 500px;
+    background-color: #efefef;
+    padding: 0px;
+    margin: 0px;
+    border: 1px solid #999;
+}
+.Container ul
+{
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    margin-left: 10px;
+}
+.Container ul li .text, .listbox
+{
+    width: 300px;
+    border: 1px solid #888;
+    padding: 4px;
+}
+.Container ul li .listbox
+{
+    width: 310px;
+}
+.dateTimePicker
+{
+    border: 1px solid #888;
+    padding: 2px;
+    margin-right: 5px;
+}
+.Container ul li h3
+{
+    color: #666;
+    padding-left: 105px;
+}
+.Container ul li label
+{
+    color: #555;
+}
+.Container ul li input[type="submit"]
+{
+    border: 1px solid #888;
+    padding: 2px;
+    margin-right: 5px;
+    width: 100px;
+    cursor: pointer;
+    color: #444;
+    background-color: #eee;
+}
+.ErrorInfo
+{
+    color: Red;
+}
+
+.Controls input[type="submit"]
+{
+    padding: 8px;
+}
+.ms-inputuserfield
+{
+    border: 1px solid #888;
+}
+.left, .right
+{
+    float: left;
+    margin-top: 10px;
+}
+.left
+{
+    width: 100px;
+    text-align: right;
+    margin-right: 5px;
+}
+.clear
+{
+    float: none;
+    clear: both;
+    height: 0px;
+}
+.controls
+{
+    padding-left: 100px;
+    padding-bottom: 30px;
+}

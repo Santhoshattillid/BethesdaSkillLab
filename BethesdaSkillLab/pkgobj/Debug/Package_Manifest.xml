@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Solution xmlns="http://schemas.microsoft.com/sharepoint/" SolutionId="2a62a2ea-0723-4600-a2ed-457aabed81ba" SharePointProductVersion="14.0">
+  <Assemblies>
+    <Assembly Location="BethesdaSkillLab.dll" DeploymentTarget="GlobalAssemblyCache">
+      <SafeControls>
+        <SafeControl Assembly="BethesdaSkillLab, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ba11314441a63d9e" Namespace="BethesdaSkillLab.Registration" TypeName="*" />
+      </SafeControls>
+    </Assembly>
+  </Assemblies>
+  <TemplateFiles>
+    <TemplateFile Location="CONTROLTEMPLATES\BethesdaSkillLab\Registration\RegistrationUserControl.ascx" />
+    <TemplateFile Location="Layouts\BethesdaSkillLab\SkillLabStyles.css" />
+  </TemplateFiles>
+  <FeatureManifests>
+    <FeatureManifest Location="BethesdaSkillLab_BethesdaSkillLab\Feature.xml" />
+  </FeatureManifests>
+</Solution>

@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Feature xmlns="http://schemas.microsoft.com/sharepoint/" Id="6ef9785e-6506-47b1-8d31-2702b057d425" Scope="Site" Title="BethesdaSkillLab Registration">
+  <ElementManifests>
+    <ElementManifest Location="Registration\Elements.xml" />
+    <ElementFile Location="Registration\Registration.webpart" />
+  </ElementManifests>
+</Feature>
