@@ -84,3 +84,7 @@
     padding-left: 100px;
     padding-bottom: 20px;
 }
+.readOnly
+{
+    background-color: #eee;
+}

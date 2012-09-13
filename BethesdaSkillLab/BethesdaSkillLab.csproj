@@ -63,6 +63,7 @@
     <Compile Include="Registration\RegistrationUserControl.ascx.designer.cs">
       <DependentUpon>RegistrationUserControl.ascx.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Features\BethesdaSkillLab\BethesdaSkillLab.feature">

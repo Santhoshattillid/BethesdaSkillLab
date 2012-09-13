@@ -22,7 +22,7 @@
                     Student name:</label>
             </div>
             <div class="right">
-                <asp:TextBox runat="server" ID="Txtname" CssClass="text" ReadOnly="True"></asp:TextBox>
+                <asp:TextBox runat="server" ID="Txtname" CssClass="text readOnly" ReadOnly="True"></asp:TextBox>
             </div>
             <span class="clear"></span></li>
         <li>
@@ -31,7 +31,7 @@
                     Email:</label>
             </div>
             <div class="right">
-                <asp:TextBox runat="server" ID="Txtmail" CssClass="text" ReadOnly="True"></asp:TextBox>
+                <asp:TextBox runat="server" ID="Txtmail" CssClass="text readOnly" ReadOnly="True"></asp:TextBox>
             </div>
             <span class="clear"></span></li>
         <li>
@@ -41,7 +41,7 @@
                 </label>
             </div>
             <div class="right">
-                <asp:TextBox runat="server" ID="TxtContact" CssClass="text" ReadOnly="True"></asp:TextBox>
+                <asp:TextBox runat="server" ID="TxtContact" CssClass="text readOnly" ReadOnly="True"></asp:TextBox>
             </div>
             <span class="clear"></span></li>
         <li>
@@ -64,7 +64,8 @@
                 </label>
             </div>
             <div class="right">
-                <SharePoint:DateTimeControl runat="server" ID="DtpDate" CssClassTextBox="dateTimePicker" />
+                <asp:DropDownList ID="DdlDates" runat="server" CssClass="listbox" OnSelectedIndexChanged="DdlDates_SelectedIndexChanged">
+                </asp:DropDownList>
             </div>
             <span class="clear"></span></li>
         <li>
@@ -74,7 +75,8 @@
                 </label>
             </div>
             <div class="right">
-                <SharePoint:DateTimeControl runat="server" ID="DtpTime" CssClassTextBox="dateTimePicker" />
+                <asp:DropDownList ID="DdlTime" runat="server" CssClass="listbox">
+                </asp:DropDownList>
             </div>
             <span class="clear"></span></li>
         <li>

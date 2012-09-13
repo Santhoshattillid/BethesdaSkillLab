@@ -49,22 +49,22 @@ namespace BethesdaSkillLab.Registration {
         protected global::System.Web.UI.WebControls.DropDownList DdlSkill;
         
         /// <summary>
-        /// DtpDate control.
+        /// DdlDates control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.SharePoint.WebControls.DateTimeControl DtpDate;
+        protected global::System.Web.UI.WebControls.DropDownList DdlDates;
         
         /// <summary>
-        /// DtpTime control.
+        /// DdlTime control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.SharePoint.WebControls.DateTimeControl DtpTime;
+        protected global::System.Web.UI.WebControls.DropDownList DdlTime;
         
         /// <summary>
         /// LblError control.

@@ -51,6 +51,7 @@
 .ErrorInfo
 {
     color: Red;
+    padding-bottom: 10px;
 }
 
 .Controls input[type="submit"]
@@ -81,5 +82,9 @@
 .controls
 {
     padding-left: 100px;
-    padding-bottom: 30px;
+    padding-bottom: 20px;
+}
+.readOnly
+{
+    background-color: #eee;
 }
