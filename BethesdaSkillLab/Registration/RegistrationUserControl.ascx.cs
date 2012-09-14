@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using Microsoft.Office.Server.UserProfiles;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
@@ -18,30 +19,54 @@ namespace BethesdaSkillLab.Registration
                 {
                     Txtname.Text = SPContext.Current.Web.CurrentUser.Name;
                     Txtmail.Text = SPContext.Current.Web.CurrentUser.Email;
+                    var convertedDate = SPUtility.CreateISO8601DateTimeFromSystemDateTime(DateTime.Now.AddDays(1));
                     SPSecurity.RunWithElevatedPrivileges(delegate
                                                              {
                                                                  using (var site = new SPSite(SPContext.Current.Site.Url))
                                                                  {
-                                                                     var context = SPServiceContext.GetContext(site);
-                                                                     var profileManager = new UserProfileManager(context);
-                                                                     var userProfile =
-                                                                         profileManager.GetUserProfile(
-                                                                             SPContext.Current.Web.CurrentUser.LoginName);
-                                                                     TxtContact.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkPhone) != null && userProfile[PropertyConstants.WorkPhone].Value != null ? userProfile[PropertyConstants.WorkPhone].Value.ToString() : "00000000000";
+                                                                     using (var web = site.OpenWeb())
+                                                                     {
+                                                                         var context = SPServiceContext.GetContext(site);
+                                                                         var profileManager = new UserProfileManager(context);
+                                                                         var userProfile = profileManager.GetUserProfile(SPContext.Current.Web.CurrentUser.LoginName);
+                                                                         TxtContact.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkPhone) != null && userProfile[PropertyConstants.WorkPhone].Value != null ? userProfile[PropertyConstants.WorkPhone].Value.ToString() : "00000000000";
+
+                                                                         // Loading skills here
+                                                                         DdlSkill.Items.Clear();
+                                                                         DdlSkill.Items.Add("Select Skill");
+                                                                         var list =
+                                                                             web.Lists.TryGetList(
+                                                                                 Utilities.SkillLabConfigListName);
+                                                                         if (list != null)
+                                                                         {
+                                                                             var query = new SPQuery
+                                                                                             {
+                                                                                                 Query = @" <Where>
+                                                                                                          <Or>
+                                                                                                             <Gt>
+                                                                                                                <FieldRef Name='StartDate' />
+                                                                                                                <Value IncludeTimeValue='TRUE' Type='DateTime'>" + convertedDate + @"</Value>
+                                                                                                             </Gt>
+                                                                                                             <Gt>
+                                                                                                                <FieldRef Name='_EndDate' />
+                                                                                                                <Value IncludeTimeValue='TRUE' Type='DateTime'>" + convertedDate + @"</Value>
+                                                                                                             </Gt>
+                                                                                                          </Or>
+                                                                                                       </Where>"
+                                                                                             };
+                                                                             foreach (SPListItem listItem in list.GetItems(query))
+                                                                             {
+                                                                                 string skill =
+                                                                                     listItem[Utilities.SkillColumnName]
+                                                                                         .ToString();
+                                                                                 if (!DdlSkill.Items.Contains(new ListItem(skill)))
+                                                                                     DdlSkill.Items.Add(skill);
+                                                                             }
+                                                                         }
+                                                                         DdlSkill.SelectedIndex = 0;
+                                                                     }
                                                                  }
                                                              });
-
-                    // addding dates here
-                    DdlDates.Items.Add("Select date");
-                    var date = DateTime.Now;
-                    for (int i = 0; i < 30; i++)
-                    {
-                        date = date.AddDays(1);
-                        DdlDates.Items.Add(date.ToString(Utilities.DateFormatString));
-                    }
-
-                    DdlSkill.Items.Clear();
-                    DdlSkill.Items.Add("Skill1");
                 }
             }
             catch (Exception ex)
@@ -141,15 +166,11 @@ namespace BethesdaSkillLab.Registration
                         var convertedDate = SPUtility.CreateISO8601DateTimeFromSystemDateTime(selectedDate);
                         SPSecurity.RunWithElevatedPrivileges(delegate
                                                                  {
-                                                                     using (
-                                                                         var site =
-                                                                             new SPSite(SPContext.Current.Site.Url))
+                                                                     using (var site = new SPSite(SPContext.Current.Site.Url))
                                                                      {
                                                                          using (var web = site.OpenWeb())
                                                                          {
-                                                                             var list =
-                                                                                 web.Lists.TryGetList(
-                                                                                     Utilities.SkillLabListName);
+                                                                             var list = web.Lists.TryGetList(Utilities.SkillLabListName);
                                                                              if (list != null)
                                                                              {
                                                                                  var query = new SPQuery
@@ -167,25 +188,17 @@ namespace BethesdaSkillLab.Registration
                                                                                  {
                                                                                      if (timeSlots.ContainsKey(listItem[Utilities.TimeColumnName]))
                                                                                      {
-                                                                                         timeSlots[
-                                                                                             listItem[
-                                                                                                 Utilities.
-                                                                                                     TimeColumnName]] =
-                                                                                             false;
+                                                                                         timeSlots[listItem[Utilities.TimeColumnName]] = false;
                                                                                      }
                                                                                  }
                                                                                  DdlTime.Items.Clear();
-                                                                                 foreach (
-                                                                                     DictionaryEntry entry in timeSlots)
+                                                                                 foreach (DictionaryEntry entry in timeSlots)
                                                                                  {
                                                                                      if (Convert.ToBoolean(entry.Value))
-                                                                                         DdlTime.Items.Add(
-                                                                                             entry.Key.ToString());
+                                                                                         DdlTime.Items.Add(entry.Key.ToString());
                                                                                  }
-
                                                                                  if (DdlTime.Items.Count == 0)
-                                                                                     LblError.Text =
-                                                                                         "There is no time slots available for this date, please select another.";
+                                                                                     LblError.Text = "There is no time slots available for this date, please select another.";
                                                                              }
                                                                          }
                                                                      }
@@ -222,6 +235,95 @@ namespace BethesdaSkillLab.Registration
             {
                 var list = SPContext.Current.Web.Lists.TryGetList(Utilities.SkillLabListName);
                 Response.Redirect(list != null ? list.DefaultViewUrl : SPContext.Current.Web.Url);
+            }
+            catch (Exception ex)
+            {
+                LblError.Text = ex.Message;
+                SPDiagnosticsService.Local.WriteTrace(0, new SPDiagnosticsCategory("BethesdaSkillLab", TraceSeverity.Monitorable, EventSeverity.Error), TraceSeverity.Monitorable, ex.Message, new object[] { ex.StackTrace });
+            }
+        }
+
+        protected void DdlSkill_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (SPContext.Current != null)
+                {
+                    if (DdlSkill.SelectedIndex > 0)
+                    {
+                        var convertedDate = SPUtility.CreateISO8601DateTimeFromSystemDateTime(DateTime.Now);
+                        SPSecurity.RunWithElevatedPrivileges(delegate
+                        {
+                            using (var site = new SPSite(SPContext.Current.Site.Url))
+                            {
+                                using (var web = site.OpenWeb())
+                                {
+                                    var list = web.Lists.TryGetList(Utilities.SkillLabConfigListName);
+                                    if (list != null)
+                                    {
+                                        var query = new SPQuery
+                                        {
+                                            Query =
+                                                @"<Where>
+                                                    <And>
+                                                      <Or>
+                                                         <Gt>
+                                                            <FieldRef Name='StartDate' />
+                                                            <Value IncludeTimeValue='FALSE' Type='DateTime'>" + convertedDate + @"</Value>
+                                                         </Gt>
+                                                         <Gt>
+                                                            <FieldRef Name='_EndDate' />
+                                                            <Value IncludeTimeValue='FALSE' Type='DateTime'>" + convertedDate + @"</Value>
+                                                         </Gt>
+                                                      </Or>
+                                                      <Eq>
+                                                           <FieldRef Name='Title' />
+                                                            <Value Type='Text'>" + DdlSkill.SelectedValue + @"</Value>
+                                                      </Eq>
+                                                    </And>
+                                                   </Where>"
+                                        };
+
+                                        DdlTime.Items.Clear();
+                                        DdlDates.Items.Clear();
+                                        DdlDates.Items.Add("Select Date");
+                                        var collection = list.GetItems(query);
+                                        if (collection.Count > 0)
+                                        {
+                                            var minDate = Convert.ToDateTime(collection[0][Utilities.StartDateColumnName]);
+                                            var maxDate = Convert.ToDateTime(collection[0][Utilities.EndDateColumnName]);
+                                            foreach (SPListItem listItem in collection)
+                                            {
+                                                var value = Convert.ToDateTime(listItem[Utilities.StartDateColumnName]);
+                                                if (value < minDate)
+                                                    minDate = value;
+                                                if (value > maxDate)
+                                                    maxDate = value;
+                                            }
+                                            if (minDate < DateTime.Now.AddDays(1))
+                                                minDate = DateTime.Now.AddDays(1);
+                                            if (minDate < maxDate)
+                                            {
+                                                while (minDate <= maxDate)
+                                                {
+                                                    DdlDates.Items.Add(minDate.ToString(Utilities.DateFormatString));
+                                                    minDate = minDate.AddDays(1);
+                                                }
+                                            }
+                                            if (DdlDates.Items.Count == 1)
+                                                LblError.Text = "There is no slot defined for this skill";
+                                        }
+                                        else
+                                            LblError.Text = "There is no slot defined for this skill";
+                                        DdlDates.SelectedIndex = 0;
+                                    }
+                                }
+                            }
+                        });
+                    }
+                    else
+                        LblError.Text = "Please select date";
+                }
             }
             catch (Exception ex)
             {

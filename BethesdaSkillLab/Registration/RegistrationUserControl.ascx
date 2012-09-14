@@ -53,7 +53,8 @@
                 <label>
                     Skill:</label></div>
             <div class="right">
-                <asp:DropDownList runat="server" ID="DdlSkill" CssClass="listbox" AutoPostBack="true">
+                <asp:DropDownList runat="server" ID="DdlSkill" CssClass="listbox"
+                    AutoPostBack="true" onselectedindexchanged="DdlSkill_SelectedIndexChanged">
                 </asp:DropDownList>
             </div>
             <span class="clear"></span></li>

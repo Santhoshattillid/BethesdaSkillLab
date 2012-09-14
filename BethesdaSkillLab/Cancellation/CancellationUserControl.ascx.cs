@@ -304,6 +304,7 @@ namespace BethesdaSkillLab.Cancellation
                                         }
                                     }
                                     web.AllowUnsafeUpdates = false;
+                                    LblError.Text = "Your slot has been cancelled succesfully.";
                                 }
                             }
                         }
