@@ -37,7 +37,7 @@ namespace BethesdaSkillLab.Registration
                     for (int i = 0; i < 30; i++)
                     {
                         date = date.AddDays(1);
-                        DdlDates.Items.Add(date.ToString("dd MMM yyyy"));
+                        DdlDates.Items.Add(date.ToString(Utilities.DateFormatString));
                     }
 
                     DdlSkill.Items.Clear();
@@ -58,19 +58,19 @@ namespace BethesdaSkillLab.Registration
                 if (SPContext.Current != null)
                 {
                     // validation starts here
-                    if (DdlSkill.SelectedIndex == 0)
+                    if (DdlSkill.SelectedIndex < 0)
                     {
                         LblError.Text = "Please select skill and fill all other fields.";
                         return;
                     }
 
-                    if (DdlDates.SelectedIndex == 0)
+                    if (DdlDates.SelectedIndex < 0)
                     {
                         LblError.Text = "Please select date for registration";
                         return;
                     }
 
-                    if (DdlTime.SelectedIndex == 0)
+                    if (DdlTime.SelectedIndex < 0)
                     {
                         LblError.Text = "Please select time slot for registration";
                         return;
@@ -103,6 +103,7 @@ namespace BethesdaSkillLab.Registration
                                     };
                                     if (list.GetItems(query).Count == 0)
                                     {
+                                        web.AllowUnsafeUpdates = true;
                                         var newItem = list.Items.Add();
                                         newItem["Title"] = "New registration";
                                         newItem[Utilities.SkillColumnName] = DdlSkill.SelectedValue;
@@ -110,6 +111,8 @@ namespace BethesdaSkillLab.Registration
                                         newItem[Utilities.ScheduleDateColumnName] = selectedDate;
                                         newItem[Utilities.TimeColumnName] = DdlTime.SelectedValue;
                                         newItem.Update();
+                                        web.AllowUnsafeUpdates = false;
+                                        LblError.Text = "Your slot has been registered successfully.";
                                     }
                                     else
                                         LblError.Text = "The selected slot is already registered, please try again.";
@@ -202,7 +205,7 @@ namespace BethesdaSkillLab.Registration
         private Hashtable GetTimeSlots()
         {
             var table = new Hashtable { { "09 AM - 10 AM", true },
-                                        { "10 AM - 11 AM", true } ,
+                                        { "10 AM - 11 AM", true },
                                         { "11 AM - 12 PM", true },
                                         { "12 PM - 01 AM", true },
                                         { "01 PM - 02 AM", true },
@@ -211,6 +214,20 @@ namespace BethesdaSkillLab.Registration
                                         { "04 PM - 05 AM", true },
             };
             return table;
+        }
+
+        protected void BtnCancel_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var list = SPContext.Current.Web.Lists.TryGetList(Utilities.SkillLabListName);
+                Response.Redirect(list != null ? list.DefaultViewUrl : SPContext.Current.Web.Url);
+            }
+            catch (Exception ex)
+            {
+                LblError.Text = ex.Message;
+                SPDiagnosticsService.Local.WriteTrace(0, new SPDiagnosticsCategory("BethesdaSkillLab", TraceSeverity.Monitorable, EventSeverity.Error), TraceSeverity.Monitorable, ex.Message, new object[] { ex.StackTrace });
+            }
         }
     }
 }

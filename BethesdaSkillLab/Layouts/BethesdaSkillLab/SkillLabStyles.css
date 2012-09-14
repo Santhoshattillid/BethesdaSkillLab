@@ -53,11 +53,6 @@
     color: Red;
     padding-bottom: 10px;
 }
-
-.Controls input[type="submit"]
-{
-    padding: 8px;
-}
 .ms-inputuserfield
 {
     border: 1px solid #888;

@@ -64,7 +64,8 @@
                 </label>
             </div>
             <div class="right">
-                <asp:DropDownList ID="DdlDates" runat="server" CssClass="listbox" OnSelectedIndexChanged="DdlDates_SelectedIndexChanged">
+                <asp:DropDownList ID="DdlDates" runat="server" CssClass="listbox" OnSelectedIndexChanged="DdlDates_SelectedIndexChanged"
+                    AutoPostBack="True">
                 </asp:DropDownList>
             </div>
             <span class="clear"></span></li>
@@ -91,7 +92,8 @@
         <li>
             <div class="controls">
                 <asp:Button runat="server" Text="Register" ID="BtnRegister" OnClick="BtnRegister_Click" />
-                <asp:Button runat="server" Text="Close" ID="BtnCancel" />
+                <asp:Button runat="server" Text="Close" ID="BtnCancel"
+                    onclick="BtnCancel_Click" />
             </div>
         </li>
     </ul>

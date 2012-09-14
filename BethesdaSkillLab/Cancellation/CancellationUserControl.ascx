@@ -1,4 +1,4 @@
-<%@ Assembly Name="BethesdaSkillLab, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ba11314441a63d9e" %>
+﻿<%@ Assembly Name="$SharePoint.Project.AssemblyFullName$" %>
 <%@ Assembly Name="Microsoft.Web.CommandUI, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
 <%@ Register TagPrefix="SharePoint" Namespace="Microsoft.SharePoint.WebControls"
     Assembly="Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
@@ -7,14 +7,14 @@
 <%@ Import Namespace="Microsoft.SharePoint" %>
 <%@ Register TagPrefix="WebPartPages" Namespace="Microsoft.SharePoint.WebPartPages"
     Assembly="Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RegistrationUserControl.ascx.cs"
-    Inherits="BethesdaSkillLab.Registration.RegistrationUserControl" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CancellationUserControl.ascx.cs"
+    Inherits="BethesdaSkillLab.Cancellation.CancellationUserControl" %>
 <link href="/_layouts/BethesdaSkillLab/SkillLabStyles.css" rel="stylesheet" type="text/css" />
 <div class="Container">
     <ul>
         <li>
             <h3>
-                Student Registration Form</h3>
+                Skill Lab Cancellation</h3>
         </li>
         <li>
             <div class="left">
@@ -53,7 +53,8 @@
                 <label>
                     Skill:</label></div>
             <div class="right">
-                <asp:DropDownList runat="server" ID="DdlSkill" CssClass="listbox" AutoPostBack="true">
+                <asp:DropDownList runat="server" ID="DdlSkill" CssClass="listbox" AutoPostBack="true"
+                    OnSelectedIndexChanged="DdlSkill_SelectedIndexChanged">
                 </asp:DropDownList>
             </div>
             <span class="clear"></span></li>
@@ -64,8 +65,8 @@
                 </label>
             </div>
             <div class="right">
-                <asp:DropDownList ID="DdlDates" runat="server" CssClass="listbox" OnSelectedIndexChanged="DdlDates_SelectedIndexChanged"
-                    AutoPostBack="True">
+                <asp:DropDownList ID="DdlDates" runat="server" CssClass="listbox" AutoPostBack="True"
+                    OnSelectedIndexChanged="DdlDates_SelectedIndexChanged">
                 </asp:DropDownList>
             </div>
             <span class="clear"></span></li>
@@ -91,9 +92,9 @@
         </li>
         <li>
             <div class="controls">
-                <asp:Button runat="server" Text="Register" ID="BtnRegister" OnClick="BtnRegister_Click" />
-                <asp:Button runat="server" Text="Close" ID="BtnCancel"
-                    onclick="BtnCancel_Click" />
+                <asp:Button runat="server" Text="Cancel Registration" ID="BtnCancellation" Width="130px"
+                    OnClick="BtnCancellation_Click" />
+                <asp:Button runat="server" Text="Close" ID="BtnCancel" Width="130px" OnClick="BtnCancel_Click" />
             </div>
         </li>
     </ul>

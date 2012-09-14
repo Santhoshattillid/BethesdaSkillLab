@@ -1,11 +1,6 @@
-﻿using System;
-using System.ComponentModel;
-using System.Web;
+﻿using System.ComponentModel;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
-using Microsoft.SharePoint;
-using Microsoft.SharePoint.WebControls;
 
 namespace BethesdaSkillLab.Registration
 {
@@ -13,11 +8,11 @@ namespace BethesdaSkillLab.Registration
     public class Registration : WebPart
     {
         // Visual Studio might automatically update this path when you change the Visual Web Part project item.
-        private const string _ascxPath = @"~/_CONTROLTEMPLATES/BethesdaSkillLab/Registration/RegistrationUserControl.ascx";
+        private const string AscxPath = @"~/_CONTROLTEMPLATES/BethesdaSkillLab/Registration/RegistrationUserControl.ascx";
 
         protected override void CreateChildControls()
         {
-            Control control = Page.LoadControl(_ascxPath);
+            Control control = Page.LoadControl(AscxPath);
             Controls.Add(control);
         }
     }

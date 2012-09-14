@@ -54,6 +54,14 @@
     <Reference Include="Microsoft.SharePoint.Security" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cancellation\Cancellation.cs" />
+    <Compile Include="Cancellation\CancellationUserControl.ascx.cs">
+      <DependentUpon>CancellationUserControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cancellation\CancellationUserControl.ascx.designer.cs">
+      <DependentUpon>CancellationUserControl.ascx.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registration\Registration.cs" />
     <Compile Include="Registration\RegistrationUserControl.ascx.cs">
@@ -66,6 +74,10 @@
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Cancellation\Cancellation.webpart" />
+    <None Include="Cancellation\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{b2f74207-6f6e-4b5a-aae7-b598c6e5fb8e}</SharePointProjectItemId>
+    </None>
     <None Include="Features\BethesdaSkillLab\BethesdaSkillLab.feature">
       <FeatureId>{f02afc85-fc0a-4ad5-8dd9-746c59a1ad60}</FeatureId>
     </None>
@@ -86,6 +98,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="Cancellation\CancellationUserControl.ascx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Cancellation\Elements.xml" />
     <Content Include="Features\BethesdaSkillLab\BethesdaSkillLab.Template.xml">
       <DependentUpon>BethesdaSkillLab.feature</DependentUpon>
     </Content>

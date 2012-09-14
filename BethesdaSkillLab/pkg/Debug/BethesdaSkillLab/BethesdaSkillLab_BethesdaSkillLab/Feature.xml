@@ -3,5 +3,7 @@
   <ElementManifests>
     <ElementManifest Location="Registration\Elements.xml" />
     <ElementFile Location="Registration\Registration.webpart" />
+    <ElementManifest Location="Cancellation\Elements.xml" />
+    <ElementFile Location="Cancellation\Cancellation.webpart" />
   </ElementManifests>
 </Feature>

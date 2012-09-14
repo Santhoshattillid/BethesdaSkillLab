@@ -4,11 +4,13 @@
     <Assembly Location="BethesdaSkillLab.dll" DeploymentTarget="GlobalAssemblyCache">
       <SafeControls>
         <SafeControl Assembly="BethesdaSkillLab, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ba11314441a63d9e" Namespace="BethesdaSkillLab.Registration" TypeName="*" />
+        <SafeControl Assembly="BethesdaSkillLab, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ba11314441a63d9e" Namespace="BethesdaSkillLab.Cancellation" TypeName="*" />
       </SafeControls>
     </Assembly>
   </Assemblies>
   <TemplateFiles>
     <TemplateFile Location="CONTROLTEMPLATES\BethesdaSkillLab\Registration\RegistrationUserControl.ascx" />
+    <TemplateFile Location="CONTROLTEMPLATES\BethesdaSkillLab\Cancellation\CancellationUserControl.ascx" />
     <TemplateFile Location="Layouts\BethesdaSkillLab\SkillLabStyles.css" />
   </TemplateFiles>
   <FeatureManifests>
