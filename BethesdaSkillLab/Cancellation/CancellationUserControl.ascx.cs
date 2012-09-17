@@ -24,9 +24,7 @@ namespace BethesdaSkillLab.Cancellation
                         {
                             var context = SPServiceContext.GetContext(site);
                             var profileManager = new UserProfileManager(context);
-                            var userProfile =
-                                profileManager.GetUserProfile(
-                                    SPContext.Current.Web.CurrentUser.LoginName);
+                            var userProfile = profileManager.GetUserProfile(SPContext.Current.Web.CurrentUser.LoginName);
                             TxtContact.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkPhone) != null && userProfile[PropertyConstants.WorkPhone].Value != null ? userProfile[PropertyConstants.WorkPhone].Value.ToString() : "00000000000";
 
                             // getting list of skils and dates and times for the current user
@@ -36,16 +34,18 @@ namespace BethesdaSkillLab.Cancellation
                                 var list = web.Lists.TryGetList(Utilities.SkillLabListName);
                                 if (list != null)
                                 {
+                                    var studentColumn = list.Fields[Utilities.StudentColumnName];
+                                    var scheduleDate = list.Fields[Utilities.ScheduleDateColumnName];
                                     var query = new SPQuery
                                     {
                                         Query = @"<Where>
                                                     <And>
                                                         <Eq>
-                                                            <FieldRef Name='Student' />
+                                                            <FieldRef Name='" + studentColumn.InternalName + @"' />
                                                             <Value Type='User'>" + SPContext.Current.Web.CurrentUser.LoginName + @"</Value>
                                                         </Eq>
                                                         <Geq>
-                                                            <FieldRef Name='Schedule_x0020_Date' />
+                                                            <FieldRef Name='" + scheduleDate.InternalName + @"' />
                                                             <Value IncludeTimeValue='FALSE' Type='DateTime'>" + convertedDate + @"</Value>
                                                         </Geq>
                                                     </And>
@@ -75,6 +75,7 @@ namespace BethesdaSkillLab.Cancellation
             catch (Exception ex)
             {
                 LblError.Text = ex.Message;
+                LblError.Text += "<br/>";
                 SPDiagnosticsService.Local.WriteTrace(0, new SPDiagnosticsCategory("BethesdaSkillLab", TraceSeverity.Monitorable, EventSeverity.Error), TraceSeverity.Monitorable, ex.Message, new object[] { ex.StackTrace });
             }
         }
@@ -98,22 +99,25 @@ namespace BethesdaSkillLab.Cancellation
                                     var list = web.Lists.TryGetList(Utilities.SkillLabListName);
                                     if (list != null)
                                     {
+                                        var studentColumn = list.Fields[Utilities.StudentColumnName];
+                                        var scheduleDateColumn = list.Fields[Utilities.ScheduleDateColumnName];
+                                        var skillColumn = list.Fields[Utilities.SkillColumnName];
                                         var query = new SPQuery
                                         {
                                             Query = @"<Where>
                                                         <And>
                                                             <And>
                                                                 <Eq>
-                                                                    <FieldRef Name='Student' />
+                                                                    <FieldRef Name='" + studentColumn.InternalName + @"' />
                                                                     <Value Type='User'>" + SPContext.Current.Web.CurrentUser.LoginName + @"</Value>
                                                                 </Eq>
                                                                 <Eq>
-                                                                    <FieldRef Name='Skill' />
+                                                                    <FieldRef Name='" + skillColumn.InternalName + @"' />
                                                                     <Value Type='Text'>" + DdlSkill.SelectedValue + @"</Value>
                                                                 </Eq>
                                                             </And>
                                                             <Geq>
-                                                                <FieldRef Name='Schedule_x0020_Date' />
+                                                                <FieldRef Name='" + scheduleDateColumn.InternalName + @"' />
                                                                 <Value IncludeTimeValue='FALSE' Type='DateTime'>" + convertedDate + @"</Value>
                                                             </Geq>
                                                         </And>
@@ -135,6 +139,7 @@ namespace BethesdaSkillLab.Cancellation
                     else
                     {
                         LblError.Text = "Please select skill";
+                        LblError.Text += "<br/>";
                         DdlDates.Items.Clear();
                         DdlTime.Items.Clear();
                     }
@@ -143,6 +148,7 @@ namespace BethesdaSkillLab.Cancellation
             catch (Exception ex)
             {
                 LblError.Text = ex.Message;
+                LblError.Text += "<br/>";
                 SPDiagnosticsService.Local.WriteTrace(0, new SPDiagnosticsCategory("BethesdaSkillLab", TraceSeverity.Monitorable, EventSeverity.Error), TraceSeverity.Monitorable, ex.Message, new object[] { ex.StackTrace });
             }
         }
@@ -166,22 +172,25 @@ namespace BethesdaSkillLab.Cancellation
                                     var list = web.Lists.TryGetList(Utilities.SkillLabListName);
                                     if (list != null)
                                     {
+                                        var studentColumn = list.Fields[Utilities.StudentColumnName];
+                                        var scheduleDateColumn = list.Fields[Utilities.ScheduleDateColumnName];
+                                        var skillColumn = list.Fields[Utilities.SkillColumnName];
                                         var query = new SPQuery
                                         {
                                             Query = @"<Where>
                                                         <And>
                                                             <And>
                                                                 <Eq>
-                                                                    <FieldRef Name='Student' />
+                                                                    <FieldRef Name='" + studentColumn.InternalName + @"' />
                                                                     <Value Type='User'>" + SPContext.Current.Web.CurrentUser.LoginName + @"</Value>
                                                                 </Eq>
                                                                 <Eq>
-                                                                     <FieldRef Name='Skill' />
+                                                                     <FieldRef Name='" + skillColumn.InternalName + @"' />
                                                                     <Value Type='Text'>" + DdlSkill.SelectedValue + @"</Value>
                                                                 </Eq>
                                                             </And>
                                                             <Eq>
-                                                                <FieldRef Name='Schedule_x0020_Date' />
+                                                                <FieldRef Name='" + scheduleDateColumn.InternalName + @"' />
                                                                 <Value IncludeTimeValue='FALSE' Type='DateTime'>" + convertedDate + @"</Value>
                                                             </Eq>
                                                         </And>
@@ -203,12 +212,14 @@ namespace BethesdaSkillLab.Cancellation
                     {
                         DdlTime.Items.Clear();
                         LblError.Text = "Please select slot date";
+                        LblError.Text += "<br/>";
                     }
                 }
             }
             catch (Exception ex)
             {
                 LblError.Text = ex.Message;
+                LblError.Text += "<br/>";
                 SPDiagnosticsService.Local.WriteTrace(0, new SPDiagnosticsCategory("BethesdaSkillLab", TraceSeverity.Monitorable, EventSeverity.Error), TraceSeverity.Monitorable, ex.Message, new object[] { ex.StackTrace });
             }
         }
@@ -223,6 +234,7 @@ namespace BethesdaSkillLab.Cancellation
             catch (Exception ex)
             {
                 LblError.Text = ex.Message;
+                LblError.Text += "<br/>";
                 SPDiagnosticsService.Local.WriteTrace(0, new SPDiagnosticsCategory("BethesdaSkillLab", TraceSeverity.Monitorable, EventSeverity.Error), TraceSeverity.Monitorable, ex.Message, new object[] { ex.StackTrace });
             }
         }
@@ -237,18 +249,21 @@ namespace BethesdaSkillLab.Cancellation
                     if (DdlSkill.SelectedIndex < 0)
                     {
                         LblError.Text = "Please select skill and fill all other fields.";
+                        LblError.Text += "<br/>";
                         return;
                     }
 
                     if (DdlDates.SelectedIndex < 0)
                     {
                         LblError.Text = "Please select date for cancellation";
+                        LblError.Text += "<br/>";
                         return;
                     }
 
                     if (DdlTime.SelectedIndex < 0)
                     {
                         LblError.Text = "Please select time slot for cancellation";
+                        LblError.Text += "<br/>";
                         return;
                     }
 
@@ -263,6 +278,10 @@ namespace BethesdaSkillLab.Cancellation
                                 var list = web.Lists.TryGetList(Utilities.SkillLabListName);
                                 if (list != null)
                                 {
+                                    var studentColumn = list.Fields[Utilities.StudentColumnName];
+                                    var scheduleDateColumn = list.Fields[Utilities.ScheduleDateColumnName];
+                                    var skillColumn = list.Fields[Utilities.SkillColumnName];
+                                    var timeColumn = list.Fields[Utilities.TimeColumnName];
                                     var query = new SPQuery
                                     {
                                         Query = @"<Where>
@@ -270,21 +289,21 @@ namespace BethesdaSkillLab.Cancellation
                                                         <And>
                                                             <And>
                                                                 <Eq>
-                                                                    <FieldRef Name='Time' />
+                                                                    <FieldRef Name='" + timeColumn.InternalName + @"' />
                                                                     <Value Type='Text'>" + DdlTime.SelectedValue + @"</Value>
                                                                 </Eq>
                                                                 <Eq>
-                                                                    <FieldRef Name='Schedule_x0020_Date' />
+                                                                    <FieldRef Name='" + scheduleDateColumn.InternalName + @"' />
                                                                     <Value IncludeTimeValue='FALSE' Type='DateTime'>" + convertedDate + @"</Value>
                                                                 </Eq>
                                                             </And>
                                                             <Eq>
-                                                                <FieldRef Name='Student' />
+                                                                <FieldRef Name='" + studentColumn.InternalName + @"' />
                                                                 <Value Type='User'>" + SPContext.Current.Web.CurrentUser.LoginName + @"</Value>
                                                             </Eq>
                                                         </And>
                                                         <Eq>
-                                                            <FieldRef Name='Skill' />
+                                                            <FieldRef Name='" + skillColumn.InternalName + @"' />
                                                             <Value Type='Text'>" + DdlSkill.SelectedValue + @"</Value>
                                                         </Eq>
                                                     </And>
@@ -305,6 +324,67 @@ namespace BethesdaSkillLab.Cancellation
                                     }
                                     web.AllowUnsafeUpdates = false;
                                     LblError.Text = "Your slot has been cancelled succesfully.";
+                                    LblError.Text += "<br/>";
+
+                                    // sending notification to faculty for skill lab cancellation
+                                    if (SPUtility.IsEmailServerSet(web))
+                                    {
+                                        try
+                                        {
+                                            var skillLabConfigList = web.Lists.TryGetList(Utilities.SkillLabConfigListName);
+                                            if (skillLabConfigList != null)
+                                            {
+                                                var startDateColumn = skillLabConfigList.Fields[Utilities.StartDateColumnName];
+                                                var endDateColumn = skillLabConfigList.Fields[Utilities.EndDateColumnName];
+                                                query = new SPQuery
+                                                {
+                                                    Query =
+                                                        @"<Where>
+                                                                            <And>
+                                                                              <Or>
+                                                                                 <Gt>
+                                                                                    <FieldRef Name='" + startDateColumn.InternalName + @"' />
+                                                                                    <Value IncludeTimeValue='FALSE' Type='DateTime'>" +
+                                                                                convertedDate + @"</Value>
+                                                                                 </Gt>
+                                                                                 <Gt>
+                                                                                    <FieldRef Name='" + endDateColumn.InternalName + @"' />
+                                                                                    <Value IncludeTimeValue='FALSE' Type='DateTime'>" +
+                                                                                convertedDate + @"</Value>
+                                                                                 </Gt>
+                                                                              </Or>
+                                                                              <Eq>
+                                                                                   <FieldRef Name='Title' />
+                                                                                    <Value Type='Text'>" +
+                                                                                DdlSkill.SelectedValue + @"</Value>
+                                                                              </Eq>
+                                                                            </And>
+                                                                           </Where>"
+                                                };
+                                                foreach (SPListItem listItem in skillLabConfigList.GetItems(query))
+                                                {
+                                                    var createdBy = new SPFieldUserValue(web, listItem["Author"].ToString());
+                                                    if (!string.IsNullOrEmpty(createdBy.User.Email))
+                                                    {
+                                                        var mailBody = "Here is the details of cancellation.";
+                                                        mailBody += "</br> User: " + SPContext.Current.Web.CurrentUser.Name;
+                                                        mailBody += "</br> Date: " + DdlDates.SelectedValue;
+                                                        mailBody += "</br> Skill: " + DdlSkill.SelectedValue;
+                                                        mailBody += "</br> Time-Slot: " + DdlTime.SelectedValue;
+                                                        mailBody += "</br> Cancelled at: " + DateTime.Now.ToShortDateString();
+                                                        SPUtility.SendEmail(web, true, true, createdBy.User.Email, "New skill lab registration.", mailBody);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            // write the error to event log
+                                            SPDiagnosticsService.Local.WriteTrace(0, new SPDiagnosticsCategory("BethesdaSkillLab", TraceSeverity.Monitorable, EventSeverity.Error), TraceSeverity.Monitorable, ex.Message, new object[] { ex.StackTrace });
+                                        }
+                                    }
+                                    else
+                                        LblError.Text += "</br> The email notifications cannot be send due to settings not configured.";
                                 }
                             }
                         }
@@ -314,6 +394,7 @@ namespace BethesdaSkillLab.Cancellation
             catch (Exception ex)
             {
                 LblError.Text = ex.Message;
+                LblError.Text += "<br/>";
                 SPDiagnosticsService.Local.WriteTrace(0, new SPDiagnosticsCategory("BethesdaSkillLab", TraceSeverity.Monitorable, EventSeverity.Error), TraceSeverity.Monitorable, ex.Message, new object[] { ex.StackTrace });
             }
         }

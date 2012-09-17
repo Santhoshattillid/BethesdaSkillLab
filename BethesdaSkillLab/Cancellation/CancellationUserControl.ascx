@@ -86,6 +86,7 @@
             </div>
             <div class="right">
                 <asp:Label runat="server" ID="LblError" CssClass="ErrorInfo"></asp:Label>
+                <br />
             </div>
             <div class="clear">
             </div>

@@ -53,8 +53,8 @@
                 <label>
                     Skill:</label></div>
             <div class="right">
-                <asp:DropDownList runat="server" ID="DdlSkill" CssClass="listbox"
-                    AutoPostBack="true" onselectedindexchanged="DdlSkill_SelectedIndexChanged">
+                <asp:DropDownList runat="server" ID="DdlSkill" CssClass="listbox" AutoPostBack="true"
+                    OnSelectedIndexChanged="DdlSkill_SelectedIndexChanged">
                 </asp:DropDownList>
             </div>
             <span class="clear"></span></li>
@@ -86,6 +86,7 @@
             </div>
             <div class="right">
                 <asp:Label runat="server" ID="LblError" CssClass="ErrorInfo"></asp:Label>
+                <br />
             </div>
             <div class="clear">
             </div>
@@ -93,8 +94,7 @@
         <li>
             <div class="controls">
                 <asp:Button runat="server" Text="Register" ID="BtnRegister" OnClick="BtnRegister_Click" />
-                <asp:Button runat="server" Text="Close" ID="BtnCancel"
-                    onclick="BtnCancel_Click" />
+                <asp:Button runat="server" Text="Close" ID="BtnCancel" OnClick="BtnCancel_Click" />
             </div>
         </li>
     </ul>

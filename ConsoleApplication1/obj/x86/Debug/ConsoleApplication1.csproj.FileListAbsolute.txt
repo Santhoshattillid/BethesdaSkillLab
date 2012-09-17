@@ -1,0 +1,5 @@
+C:\Users\Administrator\Documents\Santhosh_Development\BethesdaSkillLab\ConsoleApplication1\bin\Debug\ConsoleApplication1.exe
+C:\Users\Administrator\Documents\Santhosh_Development\BethesdaSkillLab\ConsoleApplication1\bin\Debug\ConsoleApplication1.pdb
+C:\Users\Administrator\Documents\Santhosh_Development\BethesdaSkillLab\ConsoleApplication1\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Administrator\Documents\Santhosh_Development\BethesdaSkillLab\ConsoleApplication1\obj\x86\Debug\ConsoleApplication1.exe
+C:\Users\Administrator\Documents\Santhosh_Development\BethesdaSkillLab\ConsoleApplication1\obj\x86\Debug\ConsoleApplication1.pdb
