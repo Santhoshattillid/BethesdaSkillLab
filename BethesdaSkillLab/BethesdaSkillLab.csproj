@@ -75,6 +75,14 @@
       <DependentUpon>RegistrationUserControl.ascx.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities.cs" />
+    <Compile Include="ViewRedirector\ViewRedirector.cs" />
+    <Compile Include="ViewRedirector\ViewRedirectorUserControl.ascx.cs">
+      <DependentUpon>ViewRedirectorUserControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ViewRedirector\ViewRedirectorUserControl.ascx.designer.cs">
+      <DependentUpon>ViewRedirectorUserControl.ascx.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Cancellation\Cancellation.webpart" />
@@ -98,21 +106,23 @@
     <None Include="Registration\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{20337cb6-9071-4183-a20e-1e8e0077a54e}</SharePointProjectItemId>
     </None>
+    <None Include="ViewRedirector\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{30058aeb-4f3e-49b3-886e-684a3617a32f}</SharePointProjectItemId>
+    </None>
+    <None Include="ViewRedirector\ViewRedirector.webpart" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="Cancellation\CancellationUserControl.ascx">
-      <SubType>ASPXCodeBehind</SubType>
-    </Content>
+    <Content Include="Cancellation\CancellationUserControl.ascx" />
     <Content Include="Cancellation\Elements.xml" />
     <Content Include="Features\BethesdaSkillLab\BethesdaSkillLab.Template.xml">
       <DependentUpon>BethesdaSkillLab.feature</DependentUpon>
     </Content>
     <Content Include="Layouts\BethesdaSkillLab\SkillLabStyles.css" />
     <Content Include="Registration\Elements.xml" />
-    <Content Include="Registration\RegistrationUserControl.ascx">
-      <SubType>ASPXCodeBehind</SubType>
-    </Content>
+    <Content Include="Registration\RegistrationUserControl.ascx" />
+    <Content Include="ViewRedirector\Elements.xml" />
+    <Content Include="ViewRedirector\ViewRedirectorUserControl.ascx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\SharePointTools\Microsoft.VisualStudio.SharePoint.targets" />

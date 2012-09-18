@@ -99,6 +99,7 @@ namespace BethesdaSkillLab.Registration
         {
             try
             {
+                LblError.Text = string.Empty;
                 if (SPContext.Current != null)
                 {
                     if (DdlSkill.SelectedIndex > 0)
@@ -204,6 +205,7 @@ namespace BethesdaSkillLab.Registration
             {
                 if (SPContext.Current != null)
                 {
+                    LblError.Text = string.Empty;
                     if (DdlDates.SelectedIndex > 0)
                     {
                         var selectedDate = Convert.ToDateTime(DdlDates.SelectedValue);
@@ -306,6 +308,8 @@ namespace BethesdaSkillLab.Registration
             {
                 if (SPContext.Current != null)
                 {
+                    LblError.Text = string.Empty;
+
                     // validation starts here
                     if (DdlSkill.SelectedIndex < 1)
                     {
@@ -365,6 +369,16 @@ namespace BethesdaSkillLab.Registration
                                         newItem[Utilities.ScheduleDateColumnName] = selectedDate;
                                         newItem[Utilities.TimeColumnName] = DdlTime.SelectedValue;
                                         newItem.Update();
+
+                                        // creating calendar event
+                                        var calendarList = web.Lists.TryGetList(Utilities.CalendarListName);
+                                        if (calendarList != null)
+                                        {
+                                            var newCalItem = calendarList.Items.Add();
+                                            newCalItem["Title"] = SPContext.Current.Web.CurrentUser.Name;
+                                            newCalItem.Update();
+                                        }
+
                                         web.AllowUnsafeUpdates = false;
                                         LblError.Text = "Your slot has been registered successfully.";
                                         LblError.Text += "<br/>";

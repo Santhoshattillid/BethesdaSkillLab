@@ -86,6 +86,7 @@ namespace BethesdaSkillLab.Cancellation
             {
                 if (SPContext.Current != null)
                 {
+                    LblError.Text = string.Empty;
                     if (DdlSkill.SelectedIndex > 0)
                     {
                         // getting list of skils and dates and times for the current user
@@ -159,6 +160,7 @@ namespace BethesdaSkillLab.Cancellation
             {
                 if (SPContext.Current != null)
                 {
+                    LblError.Text = string.Empty;
                     if (DdlSkill.SelectedIndex > 0 && DdlDates.SelectedIndex > 0)
                     {
                         var selectedDate = Convert.ToDateTime(DdlDates.SelectedValue);
@@ -245,6 +247,8 @@ namespace BethesdaSkillLab.Cancellation
             {
                 if (SPContext.Current != null)
                 {
+                    LblError.Text = string.Empty;
+
                     // validation starts here
                     if (DdlSkill.SelectedIndex < 0)
                     {

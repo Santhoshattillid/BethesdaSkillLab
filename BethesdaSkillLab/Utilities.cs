@@ -18,5 +18,10 @@
 
         public static string StudentsGroupName = "Students";
         public static string FacultyGroupName = "Faculty";
+
+        public static string StudentsViewName = "My Tests";
+
+        public static string CalendarListName = "SkillLabSchedules";
+        public static string EventOwnerColumnName = "EventOwner";
     }
 }

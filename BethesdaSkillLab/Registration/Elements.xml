@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Elements xmlns="http://schemas.microsoft.com/sharepoint/" >
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
   <Module Name="Registration" List="113" Url="_catalogs/wp">
-    <File Path="Registration\Registration.webpart" Url="Registration.webpart" Type="GhostableInLibrary" >
-      <Property Name="Group" Value="Custom" />
+    <File Path="Registration\Registration.webpart" Url="Registration.webpart" Type="GhostableInLibrary">
+      <Property Name="Group" Value="BethesdaSkillLab" />
     </File>
   </Module>
 </Elements>

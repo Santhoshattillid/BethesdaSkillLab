@@ -5,5 +5,7 @@
     <ElementFile Location="Registration\Registration.webpart" />
     <ElementManifest Location="Cancellation\Elements.xml" />
     <ElementFile Location="Cancellation\Cancellation.webpart" />
+    <ElementManifest Location="ViewRedirector\Elements.xml" />
+    <ElementFile Location="ViewRedirector\ViewRedirector.webpart" />
   </ElementManifests>
 </Feature>
