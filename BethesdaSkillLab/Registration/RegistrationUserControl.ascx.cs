@@ -248,11 +248,13 @@ namespace BethesdaSkillLab.Registration
                                                                                  var timeSlots = new List<string>();
                                                                                  foreach (SPListItem listItem in list.GetItems(query))
                                                                                  {
-                                                                                     if (!timeSlots.Contains(listItem[Utilities.TimeSlotColumnName].ToString()))
-                                                                                     {
-                                                                                         timeSlots.Add(listItem[Utilities.TimeSlotColumnName].ToString());
-                                                                                     }
+                                                                                     string slot = listItem[Utilities.TimeSlotStartTimeColumnName].ToString();
+                                                                                     slot += " - " + listItem[Utilities.TimeSlotEndTimeColumnName];
+                                                                                     if (!timeSlots.Contains(slot))
+                                                                                         timeSlots.Add(slot);
                                                                                  }
+                                                                                 var scheduleDatefield = skillLabList.Fields[Utilities.ScheduleDateColumnName];
+                                                                                 var timeField = skillLabList.Fields[Utilities.TimeColumnName];
                                                                                  foreach (string timeSlot in timeSlots)
                                                                                  {
                                                                                      query = new SPQuery
@@ -260,11 +262,11 @@ namespace BethesdaSkillLab.Registration
                                                                                          Query = @"<Where>
                                                                                                     <And>
                                                                                                         <Eq>
-                                                                                                            <FieldRef Name='Schedule_x0020_Date' />
+                                                                                                            <FieldRef Name='" + scheduleDatefield.InternalName + @"' />
                                                                                                             <Value IncludeTimeValue='FALSE' Type='DateTime'>" + convertedDate + @"</Value>
                                                                                                         </Eq>
                                                                                                         <Eq>
-                                                                                                            <FieldRef Name='Time' />
+                                                                                                            <FieldRef Name='" + timeField.InternalName + @"' />
                                                                                                             <Value Type='Text'>" + timeSlot + @"</Value>
                                                                                                         </Eq>
                                                                                                     </And>
@@ -369,14 +371,45 @@ namespace BethesdaSkillLab.Registration
                                         newItem[Utilities.ScheduleDateColumnName] = selectedDate;
                                         newItem[Utilities.TimeColumnName] = DdlTime.SelectedValue;
                                         newItem.Update();
+                                        ModifyItemPermissions(newItem);
 
                                         // creating calendar event
                                         var calendarList = web.Lists.TryGetList(Utilities.CalendarListName);
                                         if (calendarList != null)
                                         {
-                                            var newCalItem = calendarList.Items.Add();
-                                            newCalItem["Title"] = SPContext.Current.Web.CurrentUser.Name;
-                                            newCalItem.Update();
+                                            var times = DdlTime.SelectedValue.Split('-');
+                                            if (times.Length > 1)
+                                            {
+                                                var newCalItem = calendarList.Items.Add();
+                                                newCalItem["Title"] = DdlSkill.SelectedValue;
+                                                newCalItem[Utilities.EventOwnerColumnName] = SPContext.Current.Web.CurrentUser;
+                                                var date = selectedDate;
+                                                date = date.AddHours(date.Hour * -1);
+                                                date = date.AddMinutes(date.Minute * -1);
+                                                date = date.AddSeconds(date.Second * -1);
+                                                int hour = 0;
+
+                                                if (times[0].IndexOf("AM", StringComparison.Ordinal) > 0)
+                                                    hour = Convert.ToInt16(times[0].Trim().Replace("AM", ""));
+                                                else if (times[0].IndexOf("PM", StringComparison.Ordinal) > 0)
+                                                    hour = Convert.ToInt16(times[0].Trim().Replace("PM", "")) + 12;
+
+                                                date = date.AddHours(hour);
+                                                newCalItem["Start Time"] = date;
+                                                date = date.AddHours(hour * -1);
+                                                hour = 0;
+                                                if (times[1].IndexOf("AM", StringComparison.Ordinal) > 0)
+                                                    hour = Convert.ToInt16(times[1].Trim().Replace("AM", ""));
+                                                else if (times[1].IndexOf("PM", StringComparison.Ordinal) > 0)
+                                                    hour = Convert.ToInt16(times[1].Trim().Replace("PM", "")) + 12;
+                                                date = date.AddHours(hour);
+                                                newCalItem["End Time"] = date;
+                                                newCalItem["Location"] = DdlSkill.SelectedValue;
+                                                newCalItem["Category"] = "Skill test";
+                                                newCalItem["fAllDayEvent"] = false;
+                                                newCalItem.Update();
+                                                ModifyItemPermissions(newCalItem);
+                                            }
                                         }
 
                                         web.AllowUnsafeUpdates = false;
@@ -443,8 +476,7 @@ namespace BethesdaSkillLab.Registration
                                         }
                                         else
                                         {
-                                            LblError.Text +=
-                                                "</br> The email notifications cannot be send due to settings not configured.";
+                                            //LblError.Text +="</br> The email notifications cannot be send due to settings not configured.";
                                             LblError.Text += "<br/>";
                                         }
                                     }
@@ -463,6 +495,36 @@ namespace BethesdaSkillLab.Registration
             {
                 LblError.Text = ex.Message;
                 LblError.Text += "<br/>";
+                SPDiagnosticsService.Local.WriteTrace(0, new SPDiagnosticsCategory("BethesdaSkillLab", TraceSeverity.Monitorable, EventSeverity.Error), TraceSeverity.Monitorable, ex.Message, new object[] { ex.StackTrace });
+            }
+        }
+
+        private void ModifyItemPermissions(SPListItem listItem)
+        {
+            // Modifying the permissions for the list to restrict the students for direct list items operations
+            try
+            {
+                if (!listItem.HasUniqueRoleAssignments)
+                {
+                    var web = listItem.ParentList.ParentWeb;
+                    listItem.BreakRoleInheritance(false, false);
+
+                    var group = web.SiteGroups[Utilities.FacultyGroupName];
+                    var roleAssignment = new SPRoleAssignment(group);
+                    var spRole = web.RoleDefinitions["Full Control"];
+                    roleAssignment.RoleDefinitionBindings.Add(spRole);
+                    listItem.RoleAssignments.Add(roleAssignment);
+
+                    roleAssignment = new SPRoleAssignment(SPContext.Current.Web.CurrentUser);
+                    spRole = web.RoleDefinitions["Read"];
+                    roleAssignment.RoleDefinitionBindings.Add(spRole);
+                    listItem.RoleAssignments.Add(roleAssignment);
+
+                    listItem.Update();
+                }
+            }
+            catch (Exception ex)
+            {
                 SPDiagnosticsService.Local.WriteTrace(0, new SPDiagnosticsCategory("BethesdaSkillLab", TraceSeverity.Monitorable, EventSeverity.Error), TraceSeverity.Monitorable, ex.Message, new object[] { ex.StackTrace });
             }
         }

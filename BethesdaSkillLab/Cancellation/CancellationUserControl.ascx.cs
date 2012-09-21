@@ -230,8 +230,9 @@ namespace BethesdaSkillLab.Cancellation
         {
             try
             {
-                var list = SPContext.Current.Web.Lists.TryGetList(Utilities.SkillLabListName);
-                Response.Redirect(list != null ? list.DefaultViewUrl : SPContext.Current.Web.Url);
+                //var list = SPContext.Current.Web.Lists.TryGetList(Utilities.SkillLabListName);
+                //Response.Redirect(list != null ? list.DefaultViewUrl : SPContext.Current.Web.Url);
+                Response.Redirect(SPContext.Current.Web.Url);
             }
             catch (Exception ex)
             {
@@ -326,6 +327,71 @@ namespace BethesdaSkillLab.Cancellation
                                             break;
                                         }
                                     }
+
+                                    // removing the event from calendar
+                                    var calendar = web.Lists.TryGetList(Utilities.CalendarListName);
+                                    if (calendar != null)
+                                    {
+                                        var times = DdlTime.SelectedValue.Split('-');
+                                        if (times.Length > 1)
+                                        {
+                                            var startTime = selectedDate;
+                                            startTime = startTime.AddHours(startTime.Hour * -1);
+                                            startTime = startTime.AddMinutes(startTime.Minute * -1);
+                                            startTime = startTime.AddSeconds(startTime.Second * -1);
+
+                                            var endTime = startTime;
+
+                                            int hour = 0;
+
+                                            if (times[0].IndexOf("AM", StringComparison.Ordinal) > 0)
+                                                hour = Convert.ToInt16(times[0].Trim().Replace("AM", ""));
+                                            else if (times[0].IndexOf("PM", StringComparison.Ordinal) > 0)
+                                                hour = Convert.ToInt16(times[0].Trim().Replace("PM", "")) + 12;
+
+                                            startTime = startTime.AddHours(hour);
+
+                                            hour = 0;
+                                            if (times[1].IndexOf("AM", StringComparison.Ordinal) > 0)
+                                                hour = Convert.ToInt16(times[1].Trim().Replace("AM", ""));
+                                            else if (times[1].IndexOf("PM", StringComparison.Ordinal) > 0)
+                                                hour = Convert.ToInt16(times[1].Trim().Replace("PM", "")) + 12;
+
+                                            endTime = endTime.AddHours(hour);
+
+                                            query = new SPQuery
+                                                        {
+                                                            Query = @"<Where>
+                                                                        <And>
+                                                                            <And>
+                                                                                <Eq>
+                                                                                    <FieldRef Name='AssignedTo' />
+                                                                                        <Value Type='User'>" + SPContext.Current.Web.CurrentUser.LoginName + @"</Value>
+                                                                                </Eq>
+                                                                                <Eq>
+                                                                                    <FieldRef Name='EventDate' />
+                                                                                        <Value IncludeTimeValue='TRUE' Type='DateTime'>" + SPUtility.CreateISO8601DateTimeFromSystemDateTime(startTime) + @"</Value>
+                                                                                </Eq>
+                                                                            </And>
+                                                                            <Eq>
+                                                                                <FieldRef Name='EndDate' />
+                                                                                    <Value IncludeTimeValue='TRUE' Type='DateTime'>" + SPUtility.CreateISO8601DateTimeFromSystemDateTime(endTime) + @"</Value>
+                                                                            </Eq>
+                                                                        </And>
+                                                                       </Where>"
+                                                        };
+                                            collection = calendar.GetItems(query);
+                                            while (collection.Count > 0)
+                                            {
+                                                foreach (SPListItem listItem in collection)
+                                                {
+                                                    listItem.Delete();
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+
                                     web.AllowUnsafeUpdates = false;
                                     LblError.Text = "Your slot has been cancelled succesfully.";
                                     LblError.Text += "<br/>";
@@ -387,8 +453,9 @@ namespace BethesdaSkillLab.Cancellation
                                             SPDiagnosticsService.Local.WriteTrace(0, new SPDiagnosticsCategory("BethesdaSkillLab", TraceSeverity.Monitorable, EventSeverity.Error), TraceSeverity.Monitorable, ex.Message, new object[] { ex.StackTrace });
                                         }
                                     }
-                                    else
-                                        LblError.Text += "</br> The email notifications cannot be send due to settings not configured.";
+
+                                    // else
+                                    //   LblError.Text += "</br> The email notifications cannot be send due to settings not configured.";
                                 }
                             }
                         }
