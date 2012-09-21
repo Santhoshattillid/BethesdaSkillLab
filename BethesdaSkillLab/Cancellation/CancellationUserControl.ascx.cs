@@ -442,7 +442,7 @@ namespace BethesdaSkillLab.Cancellation
                                                         mailBody += "</br> Skill: " + DdlSkill.SelectedValue;
                                                         mailBody += "</br> Time-Slot: " + DdlTime.SelectedValue;
                                                         mailBody += "</br> Cancelled at: " + DateTime.Now.ToShortDateString();
-                                                        SPUtility.SendEmail(web, true, true, createdBy.User.Email, "New skill lab registration.", mailBody);
+                                                        SPUtility.SendEmail(web, true, true, createdBy.User.Email, "New skill lab test cancellation.", mailBody);
                                                     }
                                                 }
                                             }
