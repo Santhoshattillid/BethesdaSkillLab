@@ -121,7 +121,9 @@
     </Content>
     <Content Include="Layouts\BethesdaSkillLab\SkillLabStyles.css" />
     <Content Include="Registration\Elements.xml" />
-    <Content Include="Registration\RegistrationUserControl.ascx" />
+    <Content Include="Registration\RegistrationUserControl.ascx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="ViewRedirector\Elements.xml" />
     <Content Include="ViewRedirector\ViewRedirectorUserControl.ascx" />
   </ItemGroup>

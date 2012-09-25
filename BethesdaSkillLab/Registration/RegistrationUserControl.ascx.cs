@@ -18,63 +18,95 @@ namespace BethesdaSkillLab.Registration
             {
                 if (!IsPostBack && SPContext.Current != null)
                 {
-                    Txtname.Text = SPContext.Current.Web.CurrentUser.Name;
-                    Txtmail.Text = SPContext.Current.Web.CurrentUser.Email;
-                    var convertedDate = SPUtility.CreateISO8601DateTimeFromSystemDateTime(DateTime.Now.AddDays(1));
-                    SPSecurity.RunWithElevatedPrivileges(delegate
-                                                             {
-                                                                 using (var site = new SPSite(SPContext.Current.Site.Url))
-                                                                 {
-                                                                     using (var web = site.OpenWeb())
-                                                                     {
-                                                                         // skipping if error occured on user profile service
-                                                                         try
-                                                                         {
-                                                                             var context = SPServiceContext.GetContext(site);
-                                                                             var profileManager = new UserProfileManager(context);
-                                                                             var userProfile = profileManager.GetUserProfile(SPContext.Current.Web.CurrentUser.LoginName);
-                                                                             TxtContact.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkPhone) != null && userProfile[PropertyConstants.WorkPhone].Value != null ? userProfile[PropertyConstants.WorkPhone].Value.ToString() : "00000000000";
-                                                                         }
-                                                                         catch (Exception) { }
+                    if (SPContext.Current.Web.CurrentUser != null)
+                    {
+                        Txtname.Text = SPContext.Current.Web.CurrentUser.Name;
 
-                                                                         // Loading skills here
-                                                                         DdlSkill.Items.Clear();
-                                                                         DdlSkill.Items.Add("Select Skill");
-                                                                         var list =
-                                                                             web.Lists.TryGetList(
-                                                                                 Utilities.SkillLabConfigListName);
-                                                                         if (list != null)
+                        //Txtmail.Text = SPContext.Current.Web.CurrentUser.Email;
+                        var convertedDate = SPUtility.CreateISO8601DateTimeFromSystemDateTime(DateTime.Now.AddDays(1));
+                        SPSecurity.RunWithElevatedPrivileges(delegate
+                                                                 {
+                                                                     using (var site = new SPSite(SPContext.Current.Site.Url))
+                                                                     {
+                                                                         using (var web = site.OpenWeb())
                                                                          {
-                                                                             var startDate = list.Fields[Utilities.StartDateColumnName];
-                                                                             var endDate = list.Fields[Utilities.EndDateColumnName];
-                                                                             var query = new SPQuery
-                                                                                             {
-                                                                                                 Query = @" <Where>
+                                                                             // skipping if error occured on user profile service
+                                                                             try
+                                                                             {
+                                                                                 var context = SPServiceContext.GetContext(site);
+                                                                                 var profileManager = new UserProfileManager(context);
+                                                                                 var userProfile = profileManager.GetUserProfile(SPContext.Current.Web.CurrentUser.LoginName);
+                                                                                 TxtContact.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkPhone) != null && userProfile[PropertyConstants.WorkPhone].Value != null ? userProfile[PropertyConstants.WorkPhone].Value.ToString() : "00000000000";
+                                                                                 Txtmail.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkEmail) != null && userProfile[PropertyConstants.WorkEmail].Value != null ? userProfile[PropertyConstants.WorkEmail].Value.ToString() : "";
+                                                                             }
+                                                                             catch (Exception)
+                                                                             {
+                                                                                 LblError.Text =
+                                                                                     "An error occured while getting Contact and Email from your profile.";
+                                                                                 return;
+                                                                             }
+
+                                                                             // Loading skills here
+                                                                             DdlSkill.Items.Clear();
+                                                                             DdlSkill.Items.Add("Select Skill");
+                                                                             var list =
+                                                                                 web.Lists.TryGetList(
+                                                                                     Utilities.SkillLabConfigListName);
+                                                                             if (list != null)
+                                                                             {
+                                                                                 var startDate =
+                                                                                     list.Fields[
+                                                                                         Utilities.StartDateColumnName];
+                                                                                 var endDate =
+                                                                                     list.Fields[
+                                                                                         Utilities.EndDateColumnName];
+                                                                                 var query = new SPQuery
+                                                                                                 {
+                                                                                                     Query =
+                                                                                                         @" <Where>
                                                                                                           <Or>
                                                                                                              <Gt>
-                                                                                                                <FieldRef Name='" + startDate.InternalName + @"' />
-                                                                                                                <Value IncludeTimeValue='FALSE' Type='DateTime'>" + convertedDate + @"</Value>
+                                                                                                                <FieldRef Name='" +
+                                                                                                         startDate.
+                                                                                                             InternalName +
+                                                                                                         @"' />
+                                                                                                                <Value IncludeTimeValue='FALSE' Type='DateTime'>" +
+                                                                                                         convertedDate +
+                                                                                                         @"</Value>
                                                                                                              </Gt>
                                                                                                              <Gt>
-                                                                                                                <FieldRef Name='" + endDate.InternalName + @"' />
-                                                                                                                <Value IncludeTimeValue='FALSE' Type='DateTime'>" + convertedDate + @"</Value>
+                                                                                                                <FieldRef Name='" +
+                                                                                                         endDate.
+                                                                                                             InternalName +
+                                                                                                         @"' />
+                                                                                                                <Value IncludeTimeValue='FALSE' Type='DateTime'>" +
+                                                                                                         convertedDate +
+                                                                                                         @"</Value>
                                                                                                              </Gt>
                                                                                                           </Or>
                                                                                                        </Where>"
-                                                                                             };
-                                                                             foreach (SPListItem listItem in list.GetItems(query))
-                                                                             {
-                                                                                 string skill =
-                                                                                     listItem[Utilities.SkillColumnName]
-                                                                                         .ToString();
-                                                                                 if (!DdlSkill.Items.Contains(new ListItem(skill)))
-                                                                                     DdlSkill.Items.Add(skill);
+                                                                                                 };
+                                                                                 foreach (
+                                                                                     SPListItem listItem in
+                                                                                         list.GetItems(query))
+                                                                                 {
+                                                                                     string skill =
+                                                                                         listItem[
+                                                                                             Utilities.SkillColumnName]
+                                                                                             .ToString();
+                                                                                     if (
+                                                                                         !DdlSkill.Items.Contains(
+                                                                                             new ListItem(skill)))
+                                                                                         DdlSkill.Items.Add(skill);
+                                                                                 }
                                                                              }
+                                                                             DdlSkill.SelectedIndex = 0;
                                                                          }
-                                                                         DdlSkill.SelectedIndex = 0;
                                                                      }
-                                                                 }
-                                                             });
+                                                                 });
+                    }
+                    else
+                        LblError.Text = "Please LogIn and then try the registration.";
                 }
             }
             catch (Exception ex)
