@@ -27,10 +27,15 @@ namespace BethesdaSkillLab.Registration
                                                                  {
                                                                      using (var web = site.OpenWeb())
                                                                      {
-                                                                         var context = SPServiceContext.GetContext(site);
-                                                                         var profileManager = new UserProfileManager(context);
-                                                                         var userProfile = profileManager.GetUserProfile(SPContext.Current.Web.CurrentUser.LoginName);
-                                                                         TxtContact.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkPhone) != null && userProfile[PropertyConstants.WorkPhone].Value != null ? userProfile[PropertyConstants.WorkPhone].Value.ToString() : "00000000000";
+                                                                         // skipping if error occured on user profile service
+                                                                         try
+                                                                         {
+                                                                             var context = SPServiceContext.GetContext(site);
+                                                                             var profileManager = new UserProfileManager(context);
+                                                                             var userProfile = profileManager.GetUserProfile(SPContext.Current.Web.CurrentUser.LoginName);
+                                                                             TxtContact.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkPhone) != null && userProfile[PropertyConstants.WorkPhone].Value != null ? userProfile[PropertyConstants.WorkPhone].Value.ToString() : "00000000000";
+                                                                         }
+                                                                         catch (Exception) { }
 
                                                                          // Loading skills here
                                                                          DdlSkill.Items.Clear();

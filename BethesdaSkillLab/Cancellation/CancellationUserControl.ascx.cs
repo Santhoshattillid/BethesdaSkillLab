@@ -22,10 +22,16 @@ namespace BethesdaSkillLab.Cancellation
                     {
                         using (var site = new SPSite(SPContext.Current.Site.Url))
                         {
-                            var context = SPServiceContext.GetContext(site);
-                            var profileManager = new UserProfileManager(context);
-                            var userProfile = profileManager.GetUserProfile(SPContext.Current.Web.CurrentUser.LoginName);
-                            TxtContact.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkPhone) != null && userProfile[PropertyConstants.WorkPhone].Value != null ? userProfile[PropertyConstants.WorkPhone].Value.ToString() : "00000000000";
+                            try
+                            {
+                                var context = SPServiceContext.GetContext(site);
+                                var profileManager = new UserProfileManager(context);
+                                var userProfile = profileManager.GetUserProfile(SPContext.Current.Web.CurrentUser.LoginName);
+                                TxtContact.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkPhone) != null && userProfile[PropertyConstants.WorkPhone].Value != null ? userProfile[PropertyConstants.WorkPhone].Value.ToString() : "00000000000";
+                            }
+                            catch (Exception)
+                            {
+                            }
 
                             // getting list of skils and dates and times for the current user
                             var convertedDate = SPUtility.CreateISO8601DateTimeFromSystemDateTime(DateTime.Now.AddDays(1));
