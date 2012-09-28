@@ -22,103 +22,116 @@ namespace BethesdaSkillLab.Cancellation
 
                         //Txtmail.Text = SPContext.Current.Web.CurrentUser.Email;
                         SPSecurity.RunWithElevatedPrivileges(delegate
-                                                                 {
-                                                                     using (var site = new SPSite(SPContext.Current.Site.Url))
-                                                                     {
-                                                                         try
-                                                                         {
-                                                                             var context = SPServiceContext.GetContext(site);
-                                                                             var profileManager = new UserProfileManager(context);
-                                                                             var userProfile = profileManager.GetUserProfile(SPContext.Current.Web.CurrentUser.LoginName);
-                                                                             TxtContact.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkPhone) != null && userProfile[PropertyConstants.WorkPhone].Value != null ? userProfile[PropertyConstants.WorkPhone].Value.ToString() : "00000000000";
-                                                                             Txtmail.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkEmail) != null && userProfile[PropertyConstants.WorkEmail].Value != null ? userProfile[PropertyConstants.WorkEmail].Value.ToString() : "";
-                                                                         }
-                                                                         catch (Exception)
-                                                                         {
-                                                                             LblError.Text =
-                                                                                     "An error occured while getting Contact and Email from your profile.";
-                                                                             return;
-                                                                         }
+                        {
+                            using (var site = new SPSite(SPContext.Current.Site.Url))
+                            {
+                                // skipping if error occured on user profile service
+                                try
+                                {
+                                    var context = SPServiceContext.GetContext(site);
+                                    var profileManager = new UserProfileManager(context);
+                                    string userLoginName = "bethesda\\" + SPContext.Current.Web.CurrentUser.Name;
+                                    if (profileManager.UserExists(userLoginName))
+                                    {
+                                        var userProfile = profileManager.GetUserProfile(userLoginName);
+                                        TxtContact.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkPhone) != null && userProfile[PropertyConstants.WorkPhone].Value != null ? userProfile[PropertyConstants.WorkPhone].Value.ToString() : "00000000000";
+                                        Txtmail.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkEmail) != null && userProfile[PropertyConstants.WorkEmail].Value != null ? userProfile[PropertyConstants.WorkEmail].Value.ToString() : "";
+                                    }
+                                    else
+                                    {
+                                        LblError.Text = "The user - " + userLoginName + " was not found user proifle manager.";
+                                        LblError.Text += "<br/>";
+                                        return;
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    LblError.Text = "An error occured while getting Contact and Email from your profile.";
+                                    LblError.Text += "<br/>";
+                                    SPDiagnosticsService.Local.WriteTrace(0, new SPDiagnosticsCategory("BethesdaSkillLab", TraceSeverity.Monitorable, EventSeverity.Error), TraceSeverity.Monitorable, ex.Message, new object[] { ex.StackTrace });
 
-                                                                         // getting list of skils and dates and times for the current user
-                                                                         var convertedDate =
-                                                                             SPUtility.
-                                                                                 CreateISO8601DateTimeFromSystemDateTime
-                                                                                 (DateTime.Now.AddDays(1));
-                                                                         using (var web = site.OpenWeb())
-                                                                         {
-                                                                             var list =
-                                                                                 web.Lists.TryGetList(
-                                                                                     Utilities.SkillLabListName);
-                                                                             if (list != null)
-                                                                             {
-                                                                                 var studentColumn =
-                                                                                     list.Fields[
-                                                                                         Utilities.StudentColumnName];
-                                                                                 var scheduleDate =
-                                                                                     list.Fields[
-                                                                                         Utilities.
-                                                                                             ScheduleDateColumnName];
-                                                                                 var query = new SPQuery
-                                                                                                 {
-                                                                                                     Query =
-                                                                                                         @"<Where>
+                                    return;
+                                }
+
+                                // getting list of skils and dates and times for the current user
+                                var convertedDate =
+                                    SPUtility.
+                                        CreateISO8601DateTimeFromSystemDateTime
+                                        (DateTime.Now.AddDays(1));
+                                using (var web = site.OpenWeb())
+                                {
+                                    var list =
+                                        web.Lists.TryGetList(
+                                            Utilities.SkillLabListName);
+                                    if (list != null)
+                                    {
+                                        var studentColumn =
+                                            list.Fields[
+                                                Utilities.StudentColumnName];
+                                        var scheduleDate =
+                                            list.Fields[
+                                                Utilities.
+                                                    ScheduleDateColumnName];
+                                        var query = new SPQuery
+                                        {
+                                            Query =
+                                                @"<Where>
                                                     <And>
                                                         <Eq>
                                                             <FieldRef Name='" +
-                                                                                                         studentColumn.
-                                                                                                             InternalName +
-                                                                                                         @"' />
+                                                studentColumn.
+                                                    InternalName +
+                                                @"' />
                                                             <Value Type='User'>" +
-                                                                                                         SPContext.
-                                                                                                             Current.Web
-                                                                                                             .
-                                                                                                             CurrentUser
-                                                                                                             .LoginName +
-                                                                                                         @"</Value>
+                                                SPContext.
+                                                    Current.Web
+                                                    .
+                                                    CurrentUser
+                                                    .LoginName +
+                                                @"</Value>
                                                         </Eq>
                                                         <Geq>
                                                             <FieldRef Name='" +
-                                                                                                         scheduleDate.
-                                                                                                             InternalName +
-                                                                                                         @"' />
+                                                scheduleDate.
+                                                    InternalName +
+                                                @"' />
                                                             <Value IncludeTimeValue='FALSE' Type='DateTime'>" +
-                                                                                                         convertedDate +
-                                                                                                         @"</Value>
+                                                convertedDate +
+                                                @"</Value>
                                                         </Geq>
                                                     </And>
                                                   </Where>"
-                                                                                                 };
-                                                                                 var skills = new List<string>();
-                                                                                 foreach (
-                                                                                     SPListItem listItem in
-                                                                                         list.GetItems(query))
-                                                                                 {
-                                                                                     if (
-                                                                                         !skills.Contains(
-                                                                                             listItem[
-                                                                                                 Utilities.
-                                                                                                     SkillColumnName].
-                                                                                                 ToString()))
-                                                                                         skills.Add(
-                                                                                             listItem[
-                                                                                                 Utilities.
-                                                                                                     SkillColumnName].
-                                                                                                 ToString());
-                                                                                 }
-                                                                                 DdlSkill.Items.Clear();
-                                                                                 DdlDates.Items.Clear();
-                                                                                 DdlTime.Items.Clear();
-                                                                                 DdlSkill.Items.Add("Select Skill");
-                                                                                 foreach (string skill in skills)
-                                                                                 {
-                                                                                     DdlSkill.Items.Add(skill);
-                                                                                 }
-                                                                                 DdlSkill.SelectedIndex = 0;
-                                                                             }
-                                                                         }
-                                                                     }
-                                                                 });
+                                        };
+                                        var skills = new List<string>();
+                                        foreach (
+                                            SPListItem listItem in
+                                                list.GetItems(query))
+                                        {
+                                            if (
+                                                !skills.Contains(
+                                                    listItem[
+                                                        Utilities.
+                                                            SkillColumnName].
+                                                        ToString()))
+                                                skills.Add(
+                                                    listItem[
+                                                        Utilities.
+                                                            SkillColumnName].
+                                                        ToString());
+                                        }
+                                        DdlSkill.Items.Clear();
+                                        DdlDates.Items.Clear();
+                                        DdlTime.Items.Clear();
+                                        DdlSkill.Items.Add("Select Skill");
+                                        foreach (string skill in skills)
+                                        {
+                                            DdlSkill.Items.Add(skill);
+                                        }
+                                        DdlSkill.SelectedIndex = 0;
+                                    }
+                                }
+                            }
+                        });
                     }
                     else
                         LblError.Text = "Please LogIn and then try the registration.";
@@ -412,8 +425,8 @@ namespace BethesdaSkillLab.Cancellation
                                             endTime = endTime.AddHours(hour);
 
                                             query = new SPQuery
-                                                        {
-                                                            Query = @"<Where>
+                                            {
+                                                Query = @"<Where>
                                                                         <And>
                                                                             <And>
                                                                                 <Eq>
@@ -431,7 +444,7 @@ namespace BethesdaSkillLab.Cancellation
                                                                             </Eq>
                                                                         </And>
                                                                        </Where>"
-                                                        };
+                                            };
                                             collection = calendar.GetItems(query);
                                             while (collection.Count > 0)
                                             {

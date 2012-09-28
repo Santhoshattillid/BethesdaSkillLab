@@ -35,14 +35,26 @@ namespace BethesdaSkillLab.Registration
                                                                              {
                                                                                  var context = SPServiceContext.GetContext(site);
                                                                                  var profileManager = new UserProfileManager(context);
-                                                                                 var userProfile = profileManager.GetUserProfile(SPContext.Current.Web.CurrentUser.LoginName);
-                                                                                 TxtContact.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkPhone) != null && userProfile[PropertyConstants.WorkPhone].Value != null ? userProfile[PropertyConstants.WorkPhone].Value.ToString() : "00000000000";
-                                                                                 Txtmail.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkEmail) != null && userProfile[PropertyConstants.WorkEmail].Value != null ? userProfile[PropertyConstants.WorkEmail].Value.ToString() : "";
+                                                                                 string userLoginName = "bethesda\\" + SPContext.Current.Web.CurrentUser.Name;
+                                                                                 if (profileManager.UserExists(userLoginName))
+                                                                                 {
+                                                                                     var userProfile = profileManager.GetUserProfile(userLoginName);
+                                                                                     TxtContact.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkPhone) != null && userProfile[PropertyConstants.WorkPhone].Value != null ? userProfile[PropertyConstants.WorkPhone].Value.ToString() : "00000000000";
+                                                                                     Txtmail.Text = userProfile.Properties.GetPropertyByName(PropertyConstants.WorkEmail) != null && userProfile[PropertyConstants.WorkEmail].Value != null ? userProfile[PropertyConstants.WorkEmail].Value.ToString() : "";
+                                                                                 }
+                                                                                 else
+                                                                                 {
+                                                                                     LblError.Text = "The user - " + userLoginName + " was not found user proifle manager.";
+                                                                                     LblError.Text += "<br/>";
+                                                                                     return;
+                                                                                 }
                                                                              }
-                                                                             catch (Exception)
+                                                                             catch (Exception ex)
                                                                              {
-                                                                                 LblError.Text =
-                                                                                     "An error occured while getting Contact and Email from your profile.";
+                                                                                 LblError.Text = "An error occured while getting Contact and Email from your profile.";
+                                                                                 LblError.Text += "<br/>";
+                                                                                 SPDiagnosticsService.Local.WriteTrace(0, new SPDiagnosticsCategory("BethesdaSkillLab", TraceSeverity.Monitorable, EventSeverity.Error), TraceSeverity.Monitorable, ex.Message, new object[] { ex.StackTrace });
+
                                                                                  return;
                                                                              }
 
